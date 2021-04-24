@@ -24,3 +24,17 @@ pnpm-debug.log*
 
 #Electron-builder output
 /dist_electron
+bin/linux-x64-85/rooda.node
+build/binding.Makefile
+build/config.gypi
+build/Makefile
+build/roo.target.mk
+build/Release/.forge-meta
+build/Release/roo.node
+build/Release/.deps/Release/roo.node.d
+build/Release/.deps/Release/obj.target/roo.node.d
+build/Release/.deps/Release/obj.target/roo/src/c/hello_node.o.d
+build/Release/.deps/Release/obj.target/roo/src/c/hello.o.d
+build/Release/obj.target/roo.node
+build/Release/obj.target/roo/src/c/hello_node.o
+build/Release/obj.target/roo/src/c/hello.o
