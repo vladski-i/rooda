@@ -1,6 +1,6 @@
 {
 	"private": true,
-	"name": "Rooda",
+	"name": "rooda",
 	"version": "2.1.0",
 	"description": "Parallel audio processing Vue app with Electron, Webpack and a custom C module.",
 	"main": "dist/electron-app/main.js",
