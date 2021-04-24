@@ -13,6 +13,7 @@ Simple application built with [Vue](https://github.com/vuejs/vue), [Electron](ht
 - [Electron](https://github.com/electron/electron) with [electron-builder](https://github.com/electron-userland/electron-builder) package for building installers.
 - [Webpack](https://github.com/webpack/webpack) server for [development](https://github.com/webpack/webpack-dev-server) with HMR enabled.
 - Support for [Sass](https://github.com/sass/sass) out of box thanks to [node-sass](https://github.com/sass/node-sass) package.
+- A C module made for Jack operations
 
 ## Install
 

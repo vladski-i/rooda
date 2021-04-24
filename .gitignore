@@ -1,40 +1,4 @@
-.DS_Store
+build
+dist
 node_modules
-/dist
-
-
-# local env files
-.env.local
-.env.*.local
-
-# Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-#Electron-builder output
-/dist_electron
-bin/linux-x64-85/rooda.node
-build/binding.Makefile
-build/config.gypi
-build/Makefile
-build/roo.target.mk
-build/Release/.forge-meta
-build/Release/roo.node
-build/Release/.deps/Release/roo.node.d
-build/Release/.deps/Release/obj.target/roo.node.d
-build/Release/.deps/Release/obj.target/roo/src/c/hello_node.o.d
-build/Release/.deps/Release/obj.target/roo/src/c/hello.o.d
-build/Release/obj.target/roo.node
-build/Release/obj.target/roo/src/c/hello_node.o
-build/Release/obj.target/roo/src/c/hello.o
+package-lock.json
