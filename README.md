@@ -1,10 +1,7 @@
-# rooda
-
-[![license](https://img.shields.io/github/license/oliverfindl/electron-vue-boilerplate.svg?style=flat)][mit]
-[![paypal](https://img.shields.io/badge/donate-paypal-blue.svg?colorB=0070ba&style=flat)](https://paypal.me/oliverfindl)
+# Rooda
 
 Simple application built with [Vue](https://github.com/vuejs/vue), [Electron](https://github.com/electron/electron) and [Webpack](https://github.com/webpack/webpack).
-
+Boilerplate: [electron-vue-boilerplate](https://github.com/oliverfindl/electron-vue-boilerplate)
 ---
 
 ## Whats under the hood?
