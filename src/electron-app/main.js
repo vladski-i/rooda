@@ -5,6 +5,24 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const { resolve } = require("path");
 const roo = require("../../build/Release/roo.node"); // import roo
 
+// Init roo
+
+if (roo.init())
+	console.log("Roo initialized");
+else
+	console.log("Roo failed to initialize");
+
+console.log(roo.updateConfig({
+	windowSize:2,
+	mode:"ZERO_FILL"
+}));
+
+// roo.updateConfig({
+// 	asdf:1,
+// 	sdfhg:"asdfg"
+// });
+
+
 const createWindow = () => {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
@@ -52,5 +70,7 @@ app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 //Listen for synch messages, and reply with roo's reply
 ipcMain.on("synchronous-message", (event, arg) => {
 	console.log(arg);
-	event.returnValue = roo.doSomethingUseful();
+	// let ret = roo.init();
+	// console.log(`Config: ${JSON.stringify(ret,undefined,2)}`);
+	// event.returnValue = ret;
 });

@@ -1,4 +1,8 @@
-#include "hello.h"
+#ifndef _ADDONH
+#define _ADDONH
+#include <js_native_api.h>
+napi_value create_addon(napi_env env);
+#endif  // _ADDONH
 
 #define NAPI_CALL(env, call)                                      \
   do {                                                            \
@@ -17,30 +21,4 @@
       }                                                           \
     }                                                             \
   } while(0)
-
-static napi_value
-DoSomethingUseful(napi_env env, napi_callback_info info) {
-  // Do something useful.
-  printf("dosomethinguseful called\n");
-  return NULL;
-}
-
-napi_value create_addon(napi_env env) {
-  napi_value result;
-  NAPI_CALL(env, napi_create_object(env, &result));
-
-  napi_value exported_function;
-  NAPI_CALL(env, napi_create_function(env,
-                                      "doSomethingUseful",
-                                      NAPI_AUTO_LENGTH,
-                                      DoSomethingUseful,
-                                      NULL,
-                                      &exported_function));
-
-  NAPI_CALL(env, napi_set_named_property(env,
-                                         result,
-                                         "doSomethingUseful",
-                                         exported_function));
-
-  return result;
-}
+  

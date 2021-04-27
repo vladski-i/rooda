@@ -9,8 +9,8 @@
 	"use strict";
 
 	import HelloWorld from "@/components/HelloWorld";
-	const { ipcRenderer } = window.require("electron"); // import the IPC module
-	console.log("Main said: " + ipcRenderer.sendSync("synchronous-message", "ping")); // Send synchronous message to main(electron) process
+	// const { ipcRenderer } = window.require("electron"); // import the IPC module
+	// console.log("Main said: " + JSON.stringify(ipcRenderer.sendSync("synchronous-message", "ping"))); // Send synchronous message to main(electron) process
 
 	export default {
 		components: { HelloWorld }
