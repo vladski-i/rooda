@@ -10,7 +10,7 @@ Boilerplate: [electron-vue-boilerplate](https://github.com/oliverfindl/electron-
 - [Electron](https://github.com/electron/electron) with [electron-builder](https://github.com/electron-userland/electron-builder) package for building installers.
 - [Webpack](https://github.com/webpack/webpack) server for [development](https://github.com/webpack/webpack-dev-server) with HMR enabled.
 - Support for [Sass](https://github.com/sass/sass) out of box thanks to [node-sass](https://github.com/sass/node-sass) package.
-- A C module made for Jack operations
+- A C module made for [Jack](https://github.com/jackaudio/jack2) operations
 
 ## Install
 
