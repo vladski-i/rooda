@@ -55,10 +55,13 @@
 		"C"
 	],
 	"dependencies": {
+		"@vueform/slider": "^1.0.5",
+		"@websanova/vue-knob": "^0.4.2",
 		"bindings": "^1.5.0",
 		"electron-node-loader": "^1.2.0",
 		"node-loader": "^2.0.0",
-		"vue": "^3.0.7"
+		"vue": "^3.0.7",
+		"vue-knob-control": "^1.6.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.13.10",

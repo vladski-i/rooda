@@ -1,28 +1,26 @@
 <template>
-	<img class="vue-logo" src="@/assets/logo.svg" alt="Vue logo" />
+  <div>
+    <Slider v-model="value" class="lb-slider"/>
+	<p>Value is {{value}}</p>
 	<HelloWorld message="Hello Vue 3.0 + Webpack" />
+  </div>
 </template>
 
 <script>
-/* eslint-disable indent */
-
-	"use strict";
-
+	import Slider from '@vueform/slider'
 	import HelloWorld from "@/components/HelloWorld";
-	// const { ipcRenderer } = window.require("electron"); // import the IPC module
-	// console.log("Main said: " + JSON.stringify(ipcRenderer.sendSync("synchronous-message", "ping"))); // Send synchronous message to main(electron) process
+	import { ref } from "vue";
 
 	export default {
-		components: { HelloWorld }
-	};
+	components: {
+	Slider,
+	HelloWorld
+	},
+	setup() {
+	const value = ref(0);
+	return { value };
+	}
+	}
 </script>
 
-<style lang="scss">
-	@charset "utf-8";
-
-	@import "@/styles/variables";
-
-	.vue-logo {
-		max-width: 10rem;
-	}
-</style>
+<style src="./styles/slider.css"></style>
