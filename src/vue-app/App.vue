@@ -2,26 +2,27 @@
 	<div id="app">
 		<img class="vue-logo" src="@/assets/logo.svg" alt="Vue logo" />
 		<HelloWorld message="Welcome to Your Vue.js App" />
-		<!-- <KnobControl v-model="value"/> -->
 		<round-slider v-model="value" 
-			:update="updateConfig" 
+			:update="updateWindowSize" 
 			:min="2" 
 			:max="200"
 			start-angle="315"
 			end-angle="+270"/>
+		<select v-model="mode" v-on:change="updateMode(mode)">
+			<option>ZERO_FILL</option>
+			<option>NO_FILL</option>
+		</select>
 	</div>
 </template>
 
 <script>
 /* eslint-disable indent */
-/*eslint no-unused-vars: "off"*/
+/* eslint no-unused-vars: "off"*/
+/* eslint vue/no-unused-components: "off"*/
 	"use strict";
 	const { ipcRenderer } = window.require("electron"); // import the IPC module
-	// const log = window.require('console-log-level')(({level: "info"}))
 	import logger from 'console-log-level'
-	// const log = window.require('electron').remote.require('console-log-level')
-	const log = logger({level: "info"})
-	console.log(log)
+	const log = logger({level: "info"}) // import logger for easier logging
 
 	ipcRenderer.on('update-config', (event, arg) => {
 		log.debug('[Vue] config updated confirmed');
@@ -31,20 +32,25 @@
 		name: "App",
 		components: {
 			HelloWorld: () => import("@/components/HelloWorld.vue"),
-			// KnobControl: () => import("vue-knob-control"),
-			RoundSlider: () => import("vue-round-slider")
+			RoundSlider: () => import("vue-round-slider"),
 		},
 		data() {
 			return {
-				value : 0
+				value : 0,
+				mode: "ZERO_FILL"
 			};
 		},
 		methods : {
-			updateConfig: (v) => {
+			updateWindowSize: (v) => {
 				log.debug(v.value);
 				ipcRenderer.send("update-config", { windowSize: v.value });
 				log.debug("[Vue] config updated");
 				return v;
+			},
+			updateMode: (m) => {
+				log.debug(m);
+				ipcRenderer.send("update-config", { mode: m });
+				log.debug("[Vue] config updated");
 			}
 		}
 	};

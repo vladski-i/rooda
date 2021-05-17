@@ -138,12 +138,13 @@ static napi_value update_config(napi_env env, napi_callback_info info){
 	napi_value this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
 	config_t *conf = fromJs(env,*argv, args);
+	args = conf;
 	log_debug("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",conf->window_size,conf->mode);
 	return NAPI_TRUE;
 }
 
 napi_value create_addon(napi_env env) {
-	log_set_level(LOG_INFO);
+	log_set_level(LOG_DEBUG);
 	napi_value result;
 	NAPI_CALL(env, napi_create_object(env, &result));
 

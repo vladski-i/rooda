@@ -56,11 +56,13 @@
 	},
 	"homepage": "https://github.com/oliverfindl/electron-vue-boilerplate#readme",
 	"dependencies": {
+		"@invisiburu/vue-picker": "^1.1.2",
 		"console-log-level": "^1.4.1",
 		"node-loader": "^1.0.0",
 		"vue": "^2.6.12",
 		"vue-knob-control": "^1.6.0",
-		"vue-round-slider": "^1.0.1"
+		"vue-round-slider": "^1.0.1",
+		"vue-smooth-picker": "^0.4.2"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.11.6",
