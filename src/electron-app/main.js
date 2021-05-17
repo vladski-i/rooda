@@ -4,11 +4,12 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { resolve } = require("path");
 const { format } = require("url");
+const log = require('console-log-level')(({level: "info"}))
 const roo = require("../../build/Release/roo.node"); // import roo
 if (roo.init())
-	console.log("Roo initialized");
+	log.info("Roo initialized");
 else
-	console.log("Roo failed to initialize");
+	log.error("Roo failed to initialize");
 
 console.log(roo.updateConfig({
 	windowSize:2,
@@ -69,9 +70,9 @@ app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 
 //Listen for synch messages, and reply with roo's reply
 ipcMain.on("update-config", (event, arg) => {
-	console.log("[Electron]Updating roo config with " + JSON.stringify(arg));
+	log.debug("[Electron]Updating roo config with " + JSON.stringify(arg));
 	roo.updateConfig(arg);
-	console.log("[Electron] config updated");
+	log.debug("[Electron] config updated");
 	event.reply('update-config',true);
 	// let ret = roo.init();
 	// console.log(`Config: ${JSON.stringify(ret,undefined,2)}`);

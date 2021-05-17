@@ -17,9 +17,14 @@
 /*eslint no-unused-vars: "off"*/
 	"use strict";
 	const { ipcRenderer } = window.require("electron"); // import the IPC module
+	// const log = window.require('console-log-level')(({level: "info"}))
+	import logger from 'console-log-level'
+	// const log = window.require('electron').remote.require('console-log-level')
+	const log = logger({level: "info"})
+	console.log(log)
 
 	ipcRenderer.on('update-config', (event, arg) => {
-		console.log('[Vue] config updated');
+		log.debug('[Vue] config updated confirmed');
 	})
 
 	export default {
@@ -36,9 +41,9 @@
 		},
 		methods : {
 			updateConfig: (v) => {
-				console.log(v.value);
-				ipcRenderer.send("update-config", {mode : "ZERO_FILL", windowSize: v.value });
-				console.log("[Vue] config updated");
+				log.debug(v.value);
+				ipcRenderer.send("update-config", { windowSize: v.value });
+				log.debug("[Vue] config updated");
 				return v;
 			}
 		}

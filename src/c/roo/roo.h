@@ -21,4 +21,19 @@ napi_value create_addon(napi_env env);
       }                                                           \
     }                                                             \
   } while(0)
+
+  #define NAPI_CALL_UNSAFE(env, call)                             \
+  do {                                                            \
+    err = 0;                                                      \
+    napi_status status = (call);                                  \
+    if (status != napi_ok) {                                      \
+      const napi_extended_error_info* error_info = NULL;          \
+      napi_get_last_error_info((env), &error_info);               \
+      bool is_pending;                                            \
+      napi_is_exception_pending((env), &is_pending);              \
+      if (!is_pending) {                                          \
+          err = 1;                                                \
+      }                                                           \
+    }                                                             \
+  } while(0)
   

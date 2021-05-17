@@ -20,6 +20,7 @@
 #include <js_native_api.h>
 #include "roo.h"
 #include "interface.h"
+#include "log.h"
 
 jack_port_t *roo_out1, *roo_out2, *roo_in;
 jack_port_t *unroo_out, *unroo_in1, *unroo_in2;
@@ -43,7 +44,7 @@ void jack_shutdown(void *arg)
 
 static napi_value init_roo(napi_env env, napi_callback_info info)
 {
-	printf("Roo initializing...\n");
+	log_info("Roo initializing...\n");
 	const char *roo_client_name = "roo";
 	const char *unroo_client_name = "unroo";
 	const char *server_name = NULL;
@@ -109,7 +110,7 @@ static napi_value init_roo(napi_env env, napi_callback_info info)
 
 	if ((roo_in == NULL) || (roo_out1 == NULL) || (roo_out2 == NULL) || (unroo_in1 == NULL) || (unroo_in2 == NULL) || (unroo_out == NULL))
 	{
-		fprintf(stderr, "no more JACK ports available\n");
+		log_error("no more JACK ports available\n");
 		return NAPI_FALSE;
 	}
 
@@ -118,12 +119,12 @@ static napi_value init_roo(napi_env env, napi_callback_info info)
 
 	if (jack_activate(roo_client))
 	{
-		fprintf(stderr, "cannot activate roo_client");
+		log_error("cannot activate roo_client");
 		return NAPI_FALSE;
 	}
 	if (jack_activate(unroo_client))
 	{
-		fprintf(stderr, "cannot activate unroo_client");
+		log_error("cannot activate unroo_client");
 		return NAPI_FALSE;
 	}
 	return NAPI_TRUE;
@@ -131,17 +132,18 @@ static napi_value init_roo(napi_env env, napi_callback_info info)
 
 
 static napi_value update_config(napi_env env, napi_callback_info info){
-	printf("[roo]Update config called\n");
+	log_debug("[roo]Update config called\n");
 	size_t argc = 1;
 	napi_value *argv = malloc(2 * sizeof(napi_value));
 	napi_value this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
-	config_t *conf = fromJs(env,*argv);
-	printf("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",conf->window_size,conf->mode);
+	config_t *conf = fromJs(env,*argv, args);
+	log_debug("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",conf->window_size,conf->mode);
 	return NAPI_TRUE;
 }
 
 napi_value create_addon(napi_env env) {
+	log_set_level(LOG_INFO);
 	napi_value result;
 	NAPI_CALL(env, napi_create_object(env, &result));
 
