@@ -131,13 +131,13 @@ static napi_value init_roo(napi_env env, napi_callback_info info)
 
 
 static napi_value update_config(napi_env env, napi_callback_info info){
-	printf("Update config called\n");
+	printf("[roo]Update config called\n");
 	size_t argc = 1;
 	napi_value *argv = malloc(2 * sizeof(napi_value));
 	napi_value this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
 	config_t *conf = fromJs(env,*argv);
-	printf("Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",conf->window_size,conf->mode);
+	printf("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",conf->window_size,conf->mode);
 	return NAPI_TRUE;
 }
 

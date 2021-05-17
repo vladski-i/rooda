@@ -3,10 +3,8 @@
 // Modules to control application life and create native browser window.
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { resolve } = require("path");
+const { format } = require("url");
 const roo = require("../../build/Release/roo.node"); // import roo
-
-// Init roo
-
 if (roo.init())
 	console.log("Roo initialized");
 else
@@ -17,20 +15,13 @@ console.log(roo.updateConfig({
 	mode:"ZERO_FILL"
 }));
 
-// roo.updateConfig({
-// 	asdf:1,
-// 	sdfhg:"asdfg"
-// });
-
-
 const createWindow = () => {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
-		width: 720,
-		height: 540,
+		width: 800,
+		height: 600,
 		icon: resolve(__dirname, "./assets/icon.png"),
 		webPreferences: {
-			contextIsolation: false,
 			nodeIntegration: true
 		}
 	});
@@ -39,13 +30,23 @@ const createWindow = () => {
 	mainWindow.setMenu(null);
 
 	// Load the index.html of the app.
-	mainWindow.loadURL(!PRODUCTION_BUILD ? " http://localhost:8080/index.html" : ("file://" + resolve(__dirname, "../vue-app/index.html")));
+	mainWindow.loadURL(process.env.NODE_ENV === "development" ? format({
+		hostname: "localhost",
+		pathname: "index.html",
+		protocol: "http",
+		slashes: true,
+		port: 8080
+	}) : format({
+		pathname: resolve(__dirname, "../vue-app/index.html"),
+		protocol: "file",
+		slashes: true
+	}));
 
 	// Open the DevTools.
-	if(!PRODUCTION_BUILD) {
+	if(process.env.NODE_ENV === "development") {
 		mainWindow.webContents.openDevTools();
 		// require("devtron").install(); // TypeError: electron.BrowserWindow.addDevToolsExtension is not a function
-		// require("vue-devtools").install(); // not supported yet
+		require("vue-devtools").install();
 	}
 };
 
@@ -66,10 +67,12 @@ app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-
 //Listen for synch messages, and reply with roo's reply
-ipcMain.on("synchronous-message", (event, arg) => {
-	console.log(arg);
+ipcMain.on("update-config", (event, arg) => {
+	console.log("[Electron]Updating roo config with " + JSON.stringify(arg));
+	roo.updateConfig(arg);
+	console.log("[Electron] config updated");
+	event.reply('update-config',true);
 	// let ret = roo.init();
 	// console.log(`Config: ${JSON.stringify(ret,undefined,2)}`);
 	// event.returnValue = ret;

@@ -7,15 +7,13 @@ module.exports = {
 		"node": true
 	},
 	"extends": "eslint:recommended",
-	"globals": {
-		"PRODUCTION_BUILD": "readonly"
-	},
-	"parser": "@babel/eslint-parser",
 	"parserOptions": {
 		"ecmaVersion": 12,
-		"requireConfigFile": false
+		"parser": "babel-eslint"
 	},
 	"rules": {
+		"no-console": process.env.NODE_ENV === "production" ? "error" : "off",
+		"no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
 		"indent": [
 			"error",
 			"tab"
@@ -23,14 +21,6 @@ module.exports = {
 		"linebreak-style": [
 			"error",
 			"unix"
-		],
-		"quotes": [
-			"error",
-			"double"
-		],
-		"semi": [
-			"error",
-			"always"
 		]
 	}
 };

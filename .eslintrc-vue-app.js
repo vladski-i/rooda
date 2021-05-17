@@ -7,19 +7,23 @@ module.exports = {
 	},
 	"extends": [
 		"eslint:recommended",
-		"plugin:vue/vue3-essential"
+		"plugin:vue/essential"
 	],
-	"parser": "vue-eslint-parser",
 	"parserOptions": {
 		"ecmaVersion": 12,
-		"sourceType": "module",
-		"parser": "@babel/eslint-parser",
-		"requireConfigFile": false
+		"parser": "babel-eslint",
+		"sourceType": "module"
 	},
 	"plugins": [
 		"vue"
 	],
 	"rules": {
+		"no-console": process.env.NODE_ENV === "production" ? "error" : "off",
+		"no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+		"indent": [
+			"error",
+			"tab"
+		],
 		"linebreak-style": [
 			"error",
 			"unix"

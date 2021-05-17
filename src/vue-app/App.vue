@@ -1,26 +1,66 @@
 <template>
-  <div>
-    <Slider v-model="value" class="lb-slider"/>
-	<p>Value is {{value}}</p>
-	<HelloWorld message="Hello Vue 3.0 + Webpack" />
-  </div>
+	<div id="app">
+		<img class="vue-logo" src="@/assets/logo.svg" alt="Vue logo" />
+		<HelloWorld message="Welcome to Your Vue.js App" />
+		<!-- <KnobControl v-model="value"/> -->
+		<round-slider v-model="value" 
+			:update="updateConfig" 
+			:min="2" 
+			:max="200"
+			start-angle="315"
+			end-angle="+270"/>
+	</div>
 </template>
 
 <script>
-	import Slider from '@vueform/slider'
-	import HelloWorld from "@/components/HelloWorld";
-	import { ref } from "vue";
+/* eslint-disable indent */
+/*eslint no-unused-vars: "off"*/
+	"use strict";
+	const { ipcRenderer } = window.require("electron"); // import the IPC module
+
+	ipcRenderer.on('update-config', (event, arg) => {
+		console.log('[Vue] config updated');
+	})
 
 	export default {
-	components: {
-	Slider,
-	HelloWorld
-	},
-	setup() {
-	const value = ref(0);
-	return { value };
-	}
-	}
+		name: "App",
+		components: {
+			HelloWorld: () => import("@/components/HelloWorld.vue"),
+			// KnobControl: () => import("vue-knob-control"),
+			RoundSlider: () => import("vue-round-slider")
+		},
+		data() {
+			return {
+				value : 0
+			};
+		},
+		methods : {
+			updateConfig: (v) => {
+				console.log(v.value);
+				ipcRenderer.send("update-config", {mode : "ZERO_FILL", windowSize: v.value });
+				console.log("[Vue] config updated");
+				return v;
+			}
+		}
+	};
 </script>
 
-<style src="./styles/slider.css"></style>
+<style lang="scss">
+	@charset "utf-8";
+
+	@import "@/styles/variables";
+
+	#app {
+		font-family: $font-family;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-align: center;
+		background-color: $background-color;
+		color: $text-color;
+		margin-top: 60px;
+	}
+
+	img.vue-logo {
+		max-width: 200px;
+	}
+</style>
