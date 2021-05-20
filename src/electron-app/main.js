@@ -4,7 +4,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { resolve } = require("path");
 const { format } = require("url");
-const log = require('console-log-level')(({level: "info"}))
+const log = require('console-log-level')(({level: "debug"}))
 const roo = require("../../build/Release/roo.node"); // import roo
 if (roo.init())
 	log.info("Roo initialized");

@@ -5,12 +5,13 @@
 		<round-slider v-model="value" 
 			:update="updateWindowSize" 
 			:min="2" 
-			:max="200"
+			:max="200000"
 			start-angle="315"
 			end-angle="+270"/>
 		<select v-model="mode" v-on:change="updateMode(mode)">
 			<option>ZERO_FILL</option>
 			<option>NO_FILL</option>
+			<option>SINE</option>
 		</select>
 	</div>
 </template>
@@ -22,7 +23,7 @@
 	"use strict";
 	const { ipcRenderer } = window.require("electron"); // import the IPC module
 	import logger from 'console-log-level'
-	const log = logger({level: "info"}) // import logger for easier logging
+	const log = logger({level: "debug"}) // import logger for easier logging
 
 	ipcRenderer.on('update-config', (event, arg) => {
 		log.debug('[Vue] config updated confirmed');
@@ -48,7 +49,7 @@
 				return v;
 			},
 			updateMode: (m) => {
-				log.debug(m);
+				log.debug("[Vue] updating to " + m);
 				ipcRenderer.send("update-config", { mode: m });
 				log.debug("[Vue] config updated");
 			}
