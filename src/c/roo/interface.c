@@ -6,7 +6,7 @@
 #include <math.h>
 #include "interface.h"
 
-config_t *fromJs(napi_env env,napi_value object, config_t *old){
+config_t *config_from_js(napi_env env,napi_value object, config_t *old){
     config_t *conf = malloc(sizeof(config_t));
     char *buf = malloc(20 * sizeof(char));
     size_t copied;
@@ -17,7 +17,7 @@ config_t *fromJs(napi_env env,napi_value object, config_t *old){
         NAPI_CALL(env, napi_get_named_property(env, object, "mode", &result));
         NAPI_CALL(env,napi_get_value_string_latin1(env, result, buf, 10, &copied));
         if(copied <= 0){
-            log_debug("failed to copy mode value!\n");
+            log_error("failed to copy mode value!\n");
             free(buf);
             return NULL;
         }
@@ -57,10 +57,10 @@ config_t *fromJs(napi_env env,napi_value object, config_t *old){
         for (unsigned t = 0; t < conf->window_size; t ++){
             conf->window[t] = sin(M_PI * (1.0 / conf->window_size) * t);
         }
-        log_debug("[roo] updating sine window [");
+        log_trace("[roo] updating sine window [");
         for (unsigned t = 0; t < conf->window_size; t ++)
-            log_debug("%.2f,",conf->window[t]);
-        log_debug("]\n");
+            log_trace("%.2f,",conf->window[t]);
+        log_trace("]\n");
     } 
 
     conf->_roo = old->_roo;
@@ -71,4 +71,38 @@ config_t *fromJs(napi_env env,napi_value object, config_t *old){
 
 napi_value toJS(napi_env env, config_t object){
     return NULL;
+}
+
+instantiate_request_t *instantiate_request_from_js(napi_env env,napi_value object){
+    log_debug("[roo] instantiate_request_from_js called\n");
+    instantiate_request_t *request = malloc(sizeof(instantiate_request_t));
+    bool has;
+    napi_value field;
+    char *plugin_name = calloc(100, sizeof(char));
+    long unsigned copied = 0;
+    NAPI_CALL(env, napi_has_named_property(env,object,"plugin_name",&has));
+    if(!has)
+        return NULL;
+    NAPI_CALL(env, napi_get_named_property(env, object, "plugin_name", &field));
+    NAPI_CALL(env,napi_get_value_string_latin1(env, field, plugin_name, 100, &copied));
+    request->plugin_name = plugin_name;
+    NAPI_CALL(env, napi_has_named_property(env,object,"lane",&has));
+    if(!has){
+        free(request);
+        return NULL;
+    }
+    NAPI_CALL(env, napi_get_named_property(env, object, "lane", &field));
+    NAPI_CALL(env, napi_get_value_uint32(env, field, &(request->lane)));
+    return request;
+}
+
+napi_value string_list_to_js(napi_env env, const char **list, uint32_t count){
+    napi_value array;
+    NAPI_CALL(env,napi_create_array_with_length(env, count, &array));
+    for (unsigned i = 0; i < count; i++){
+        napi_value string_value;
+        NAPI_CALL(env, napi_create_string_latin1(env,list[i],strlen(list[i]),&string_value));
+        NAPI_CALL(env,napi_set_element(env,array,i,string_value));
+    }
+    return array;
 }

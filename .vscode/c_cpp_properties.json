@@ -3,7 +3,9 @@
         {
             "name": "roo",
             "includePath": [
-                "~/.electron-gyp/11.4.2/include/node"
+                "~/.electron-gyp/11.4.2/include/node",
+                "/usr/include/carla/includes",
+                "/usr/include/carla"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

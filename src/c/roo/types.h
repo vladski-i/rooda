@@ -14,3 +14,8 @@ typedef struct config {
     uint32_t _roo;
     float *window;
 }config_t;
+
+typedef struct instantiate_request{
+    char *plugin_name;
+    uint32_t lane;
+}instantiate_request_t;

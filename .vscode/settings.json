@@ -3,6 +3,14 @@
         "node_api.h": "c",
         "hello.h": "c",
         "js_native_api.h": "c",
-        "config.h": "c"
+        "config.h": "c",
+        "carlabackend.h": "c",
+        "carladefines.h": "c",
+        "carlahost.h": "c",
+        "carlanativeplugin.h": "c",
+        "carlanative.h": "c",
+        "carlautils.h": "c",
+        "lilv.h": "c",
+        "cstdlib": "c"
     }
 }

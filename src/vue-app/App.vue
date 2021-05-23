@@ -29,6 +29,12 @@
 		log.debug('[Vue] config updated confirmed');
 	})
 
+	ipcRenderer.on('instantiate-plugin', (event, arg) => {
+		console.log('[Vue] plugin instantiated');
+	})
+
+	let plugins = ipcRenderer.sendSync('get-plugin-list');
+	ipcRenderer.send('instantiate-plugin', {plugin_name : plugins[0], lane: 1})
 	export default {
 		name: "App",
 		components: {

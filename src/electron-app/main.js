@@ -16,6 +16,7 @@ console.log(roo.updateConfig({
 	mode:"ZERO_FILL"
 }));
 
+
 const createWindow = () => {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
@@ -74,7 +75,17 @@ ipcMain.on("update-config", (event, arg) => {
 	roo.updateConfig(arg);
 	log.debug("[Electron] config updated");
 	event.reply('update-config',true);
-	// let ret = roo.init();
-	// console.log(`Config: ${JSON.stringify(ret,undefined,2)}`);
-	// event.returnValue = ret;
+});
+
+ipcMain.on("instantiate-plugin", (event, arg) => {
+	log.debug("[Electron] Instantiating plugin " + JSON.stringify(arg));
+	
+	log.debug("[Electron] Plugin instantiated :" + roo.instantiatePlugin(arg));
+	event.reply('instantiate-plugin',true);
+});
+
+ipcMain.on("get-plugin-list", (event, arg) => {
+	log.debug("[Electron] Getting plugin list ");
+	arg;
+	event.returnValue = roo.getPluginList();
 });

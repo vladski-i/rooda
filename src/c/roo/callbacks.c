@@ -1,6 +1,6 @@
 #include <jack/types.h>
 #include <jack/jack.h>
-#include "config.h"
+#include "types.h"
 #include "log.h"
 
 /*UNROO CALLBACK FUNCTION + HELPERS */
