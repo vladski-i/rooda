@@ -21,6 +21,7 @@
 #include "roo.h"
 #include "interface.h"
 #include "log.h"
+#include "plugin.h"
 
 jack_port_t *roo_out1, *roo_out2, *roo_in;
 jack_port_t *unroo_out, *unroo_in1, *unroo_in2;
@@ -44,7 +45,13 @@ void jack_shutdown(void *arg)
 
 static napi_value init_roo(napi_env env, napi_callback_info info)
 {
+	NAPI_CALL(env, napi_get_boolean(env,true,&NAPI_TRUE));
+	NAPI_CALL(env, napi_get_boolean(env,false,&NAPI_FALSE));
 	log_info("Roo initializing...\n");
+	if(!init_carla_backend()){
+		log_error("Failed to initialize carla\n");
+		return NAPI_FALSE;
+	}
 	const char *roo_client_name = "roo";
 	const char *unroo_client_name = "unroo";
 	const char *server_name = NULL;
@@ -53,9 +60,6 @@ static napi_value init_roo(napi_env env, napi_callback_info info)
 	/* initialize args*/
 	args->mode = ZERO_FILL;
 	args->window_size = 1;
-
-	NAPI_CALL(env, napi_get_boolean(env,true,&NAPI_TRUE));
-	NAPI_CALL(env, napi_get_boolean(env,false,&NAPI_FALSE));
 	/* open a client connection to the JACK server */
 	if (create_client(&roo_client, roo_client_name, options, server_name))
 	{
@@ -137,16 +141,33 @@ static napi_value update_config(napi_env env, napi_callback_info info){
 	napi_value *argv = malloc(2 * sizeof(napi_value));
 	napi_value this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
-	config_t *conf = fromJs(env,*argv, args);
-	args = conf;
-	log_debug("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",conf->window_size,conf->mode);
+	config_from_js(env,*argv, args);
+	log_debug("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",args->window_size,args->mode);
 	return NAPI_TRUE;
+}
+
+static napi_value instantiate_plugin(napi_env env, napi_callback_info info){
+	log_debug("[roo] Instantiate plugin called\n");
+	size_t argc = 1;
+	napi_value *argv = malloc(sizeof(napi_value));
+	napi_value this;
+	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
+	instantiate_request_t *request = instantiate_request_from_js(env,*argv);
+	if(!add_plugin(request->plugin_name))
+		return NAPI_FALSE;
+	return NAPI_TRUE;
+}
+
+static napi_value get_plugin_list(napi_env env, napi_callback_info info){
+	uint32_t count = 0;
+	const char ** list = get_lv2_uri_list(&count);
+	return string_list_to_js(env,list,count);
 }
 
 napi_value create_addon(napi_env env) {
 	log_set_level(LOG_DEBUG);
-	napi_value result;
-	NAPI_CALL(env, napi_create_object(env, &result));
+	napi_value module;
+	NAPI_CALL(env, napi_create_object(env, &module));
 
 	napi_value init;
 	NAPI_CALL(env, napi_create_function(env,
@@ -157,7 +178,7 @@ napi_value create_addon(napi_env env) {
 										&init));
 
 	NAPI_CALL(env, napi_set_named_property(env,
-											result,
+											module,
 											"init",
 											init));
 
@@ -170,9 +191,33 @@ napi_value create_addon(napi_env env) {
 									&update));
 
 	NAPI_CALL(env, napi_set_named_property(env,
-										result,
+										module,
 										"updateConfig",
 										update));
 
-	return result;
+	napi_value instantiate;
+	NAPI_CALL(env, napi_create_function(env,
+									"instantiatePlugin",
+									NAPI_AUTO_LENGTH,
+									instantiate_plugin,
+									NULL,
+									&instantiate));
+
+	NAPI_CALL(env, napi_set_named_property(env,
+										module,
+										"instantiatePlugin",
+										instantiate));
+	napi_value get_list;
+	NAPI_CALL(env, napi_create_function(env,
+									"getPluginList",
+									NAPI_AUTO_LENGTH,
+									get_plugin_list,
+									NULL,
+									&get_list));
+
+	NAPI_CALL(env, napi_set_named_property(env,
+										module,
+										"getPluginList",
+										get_list));
+	return module;
 }
