@@ -4,7 +4,7 @@
 		<div class="row">
 			<div class="col">
 				<h3> Balance </h3>
-					This controls the proportion of the left and right channel (percentage of the left channel)
+					(This controls the proportion of the left and right channel i.e.: percentage of the left channel)
 			</div>
 		</div>
 		<div class="row">
@@ -13,6 +13,23 @@
 				:update="updateBalance" 
 				:min="0" 
 				:max="100"
+				start-angle="315"
+				end-angle="+270"/>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col">
+				<h3> Window Size </h3>
+					(This controls the size of the window we use for splitting the adio signal)
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+			<round-slider v-model="windowSize" 
+				:update="updateWindowSize" 
+				:min="50" 
+				:max="50000"
 				start-angle="315"
 				end-angle="+270"/>
 			</div>
@@ -29,10 +46,18 @@
 			</div>
 		</div>
 		<div class="row">
+			Change the mode of the signal splitting: 
+			<select v-model="mode" v-on:change="updateMode(mode)">
+				<option>ZERO_FILL</option>
+				<option>NO_FILL</option>
+				<option>SINE</option>
+			</select>
+		</div>
+		<div class="row">
 			<div class="col">
 				<div>
 					<div>
-						<button class="add_effect" @click="left_efects.push({id: left_counter, mode: 'ZERO_FILL', is_left: true});
+						<button class="add_effect" @click="left_efects.push({id: left_counter, name: 'Choose effect', is_left: true});
 							left_counter += 1;">Add an effect to the left window</button>
 					</div>
 					<div>
@@ -41,10 +66,8 @@
 				</div>
 				<div v-for="selector in left_efects" v-bind:key="selector.id">
 					Choose the desired effect:
-					<select v-model="selector.mode" v-on:change="updateMode(mode)">
-						<option>ZERO_FILL</option>
-						<option>NO_FILL</option>
-					</select>
+					<multiselect v-model="selector.name" :options="test" :searchable=true
+								@select="selectLeftEffect(selector)"></multiselect>
 					<button class="show_ui" @click="showUI(selector)">Show UI</button>
 				</div>
 			</div>
@@ -52,7 +75,7 @@
 			<div class="col">
 				<div>
 					<div>
-						<button class="add_effect" @click="right_efects.push({id: right_counter, mode: 'ZERO_FILL', is_left: false});
+						<button class="add_effect" @click="right_efects.push({id: right_counter, name: 'Choose effect', is_left: false});
 							right_counter += 1;">Add an effect to the right window</button>
 					</div>
 					<div>
@@ -61,10 +84,8 @@
 				</div>
 				<div v-for="selector in right_efects" v-bind:key="selector.id">
 					Choose the desired effect:
-					<select v-model="selector.mode" v-on:change="updateMode(mode)">
-						<option>ZERO_FILL</option>
-						<option>NO_FILL</option>
-					</select>
+					<multiselect v-model="selector.name" :options="test" :searchable=true
+						@select="selectRightEffect(selector)"></multiselect>
 					<button class="show_ui" @click="showUI(selector)">Show UI</button>
 				</div>
 			</div>
@@ -77,6 +98,7 @@
 /* eslint no-unused-vars: "off"*/
 /* eslint vue/no-unused-components: "off"*/
 	"use strict";
+	import Multiselect from 'vue-multiselect'
 	const { ipcRenderer } = window.require("electron"); // import the IPC module
 	import logger from 'console-log-level'
 	const log = logger({level: "debug"}) // import logger for easier logging
@@ -95,17 +117,20 @@
 		name: "App",
 		components: {
 			RoundSlider: () => import("vue-round-slider"),
+			Multiselect
 		},
 		data() {
 			return {
 				value : 0,
 				balance: 50,
+				windowSize: 0,
 				volume_value: 20,
 				left_counter: 0,
 				right_counter: 0,
 				left_efects: [],
 				right_efects: [],
-				mode: "ZERO_FILL"
+				mode: "ZERO_FILL",
+				test: ipcRenderer.sendSync('get-plugin-list')
 			};
 		},
 		methods : {
@@ -126,9 +151,21 @@
 				log.debug("[Vue] config updated");
 			},
 			showUI: (selector) => {
-				log.debug("[Vue] showing ui for selector effect " + selector.mode);
-				ipcRenderer.send("show-ui", { id: selector.id, mode: selector.mode, is_left: selector.is_left});
+				log.debug("[Vue] showing ui for selector effect " + selector.name);
+				ipcRenderer.send("show-ui", selector);
 				log.debug("[Vue] ui showed");	
+			},
+			selectLeftEffect: (selector) => {
+				log.debug("[Vue] adding left effect " + selector.name);
+				self.left_efects.find(x => x.id === selector.id).name = selector.name;
+				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 0, id: selector.id});
+				log.debug("[Vue] added left effect ");
+			},
+			selectRightEffect: (selector) => {
+				log.debug("[Vue] adding right effect " + selector.name);
+				self.right_efects.find(x => x.id === selector.id).name = selector.name;
+				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 1, id: selector.id});
+				log.debug("[Vue] added right effect ");
 			},
 			updateMode: (m) => {
 				log.debug("[Vue] updating mode to " + m);
@@ -138,6 +175,7 @@
 		}
 	};
 </script>
+
 
 <style lang="scss">
 	@charset "utf-8";
@@ -205,4 +243,5 @@
 			margin-bottom: 20px;
 		}
 	}
+
 </style>
