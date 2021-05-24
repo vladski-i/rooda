@@ -22,6 +22,7 @@
 #include "interface.h"
 #include "log.h"
 #include "plugin.h"
+#include "lane.h"
 
 jack_port_t *roo_out1, *roo_out2, *roo_in;
 jack_port_t *unroo_out, *unroo_in1, *unroo_in2;
@@ -143,6 +144,7 @@ static napi_value update_config(napi_env env, napi_callback_info info){
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
 	config_from_js(env,*argv, args);
 	log_debug("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",args->window_size,args->mode);
+	init_lanes_state(roo_client,unroo_client, 2);
 	return NAPI_TRUE;
 }
 
@@ -164,6 +166,10 @@ static napi_value get_plugin_list(napi_env env, napi_callback_info info){
 	return string_list_to_js(env,list,count);
 }
 
+static napi_value rooda_shutdown(napi_env env, napi_callback_info info){
+	carla_cleanup();
+	return NAPI_TRUE;
+}
 napi_value create_addon(napi_env env) {
 	log_set_level(LOG_DEBUG);
 	napi_value module;
@@ -219,5 +225,17 @@ napi_value create_addon(napi_env env) {
 										module,
 										"getPluginList",
 										get_list));
+	napi_value shutdown;
+	NAPI_CALL(env, napi_create_function(env,
+									"shutdown",
+									NAPI_AUTO_LENGTH,
+									rooda_shutdown,
+									NULL,
+									&shutdown));
+
+	NAPI_CALL(env, napi_set_named_property(env,
+										module,
+										"shutdown",
+										shutdown));
 	return module;
 }

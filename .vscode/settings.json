@@ -11,6 +11,8 @@
         "carlanative.h": "c",
         "carlautils.h": "c",
         "lilv.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "jack.h": "c",
+        "startup.h": "c"
     }
 }
