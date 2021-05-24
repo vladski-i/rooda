@@ -67,7 +67,8 @@
 				<div v-for="selector in left_efects" v-bind:key="selector.id">
 					Choose the desired effect:
 					<multiselect v-model="selector.name" :options="test" :searchable=true
-								@select="selectLeftEffect(selector)"></multiselect>
+								@input="left_efects.find(x => x.id === selector.id).name = selector.name;
+								selectLeftEffect(left_efects.find(x => x.id === selector.id));"></multiselect>
 					<button class="show_ui" @click="showUI(selector)">Show UI</button>
 				</div>
 			</div>
@@ -85,7 +86,8 @@
 				<div v-for="selector in right_efects" v-bind:key="selector.id">
 					Choose the desired effect:
 					<multiselect v-model="selector.name" :options="test" :searchable=true
-						@select="selectRightEffect(selector)"></multiselect>
+						@input="right_efects.find(x => x.id === selector.id).name = selector.name;
+						selectRightEffect(selector)"></multiselect>
 					<button class="show_ui" @click="showUI(selector)">Show UI</button>
 				</div>
 			</div>
@@ -157,13 +159,11 @@
 			},
 			selectLeftEffect: (selector) => {
 				log.debug("[Vue] adding left effect " + selector.name);
-				self.left_efects.find(x => x.id === selector.id).name = selector.name;
 				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 0, id: selector.id});
 				log.debug("[Vue] added left effect ");
 			},
 			selectRightEffect: (selector) => {
 				log.debug("[Vue] adding right effect " + selector.name);
-				self.right_efects.find(x => x.id === selector.id).name = selector.name;
 				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 1, id: selector.id});
 				log.debug("[Vue] added right effect ");
 			},
