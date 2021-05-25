@@ -61,6 +61,8 @@
 		"node-loader": "^1.0.0",
 		"vue": "^2.6.12",
 		"vue-knob-control": "^1.6.0",
+		"vue-material": "^1.0.0-beta-15",
+		"vue-multiselect": "^2.1.6",
 		"vue-round-slider": "^1.0.1",
 		"vue-smooth-picker": "^0.4.2"
 	},
