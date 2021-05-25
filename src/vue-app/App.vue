@@ -57,7 +57,7 @@
 			<div class="col">
 				<div>
 					<div>
-						<button class="add_effect" @click="left_efects.push({id: left_counter, name: 'Choose effect', is_left: true});
+						<button class="add_effect" @click="left_efects.push({id: left_counter, name: '', is_left: true});
 							left_counter += 1;">Add an effect to the left window</button>
 					</div>
 					<div>
@@ -66,9 +66,10 @@
 				</div>
 				<div v-for="selector in left_efects" v-bind:key="selector.id">
 					Choose the desired effect:
-					<multiselect v-model="selector.name" :options="test" :searchable=true
-								@input="left_efects.find(x => x.id === selector.id).name = selector.name;
-								selectLeftEffect(left_efects.find(x => x.id === selector.id));"></multiselect>
+					<md-autocomplete v-model="selector.name" :md-options="test"
+						@md-selected="left_efects.find(x => x.id === selector.id).name = selector.name;
+						selectLeftEffect(selector)">
+					</md-autocomplete>
 					<button class="show_ui" @click="showUI(selector)">Show UI</button>
 				</div>
 			</div>
@@ -76,7 +77,7 @@
 			<div class="col">
 				<div>
 					<div>
-						<button class="add_effect" @click="right_efects.push({id: right_counter, name: 'Choose effect', is_left: false});
+						<button class="add_effect" @click="right_efects.push({id: right_counter, name: '', is_left: false});
 							right_counter += 1;">Add an effect to the right window</button>
 					</div>
 					<div>
@@ -85,9 +86,10 @@
 				</div>
 				<div v-for="selector in right_efects" v-bind:key="selector.id">
 					Choose the desired effect:
-					<multiselect v-model="selector.name" :options="test" :searchable=true
-						@input="right_efects.find(x => x.id === selector.id).name = selector.name;
-						selectRightEffect(selector)"></multiselect>
+					<md-autocomplete v-model="selector.name" :md-options="test"
+						@md-selected="right_efects.find(x => x.id === selector.id).name = selector.name;
+						selectRightEffect(selector)">
+					</md-autocomplete>
 					<button class="show_ui" @click="showUI(selector)">Show UI</button>
 				</div>
 			</div>
@@ -100,7 +102,6 @@
 /* eslint no-unused-vars: "off"*/
 /* eslint vue/no-unused-components: "off"*/
 	"use strict";
-	import Multiselect from 'vue-multiselect'
 	const { ipcRenderer } = window.require("electron"); // import the IPC module
 	import logger from 'console-log-level'
 	const log = logger({level: "debug"}) // import logger for easier logging
@@ -118,8 +119,7 @@
 	export default {
 		name: "App",
 		components: {
-			RoundSlider: () => import("vue-round-slider"),
-			Multiselect
+			RoundSlider: () => import("vue-round-slider")
 		},
 		data() {
 			return {
