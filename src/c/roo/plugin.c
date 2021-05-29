@@ -66,7 +66,7 @@ void carla_cleanup(){
     carla_engine_close(carla_handle);
 }
 
-//dog shit: no support for multiple instances of the same plugin
+//dog shit: no support for multiple instances of the same plugin; past or present
 bool add_plugin(instantiate_request_t *request){
     char *plugin_name = request->plugin_name;
     uint lane = request->lane;
@@ -78,7 +78,12 @@ bool add_plugin(instantiate_request_t *request){
     const char *plugin_uri = map_get(plugin_map,plugin_name);
     if(!plugin_uri)
         return false;
-    if(!carla_add_plugin(carla_handle, BINARY_NATIVE, PLUGIN_LV2, plugin->name, "", plugin_uri, 0, NULL, 0x0))
+    bool replaceable = check_for_replace(request);
+    if(replaceable){
+        carla_replace_plugin(carla_handle, plugin->id);
+        remove_plugin_from_lane(request);
+    }
+    if(!carla_add_plugin(carla_handle, BINARY_NATIVE, PLUGIN_LV2, plugin->name, "", plugin_uri, plugin->id, NULL, 0x0))
         return false;
     add_plugin_to_lane(request,plugin);
     return true;

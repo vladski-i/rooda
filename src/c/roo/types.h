@@ -28,8 +28,11 @@ typedef struct instantiate_request{
 typedef struct roo_plugin {
     char *name;
     const jack_port_t **in_ports;
-    const jack_port_t **out_ports;
+    const jack_port_t **out_ports;    
+    const char **in_port_names;
+    const char **out_port_names;
     uint32_t id;
+    uint32_t no_ports;
 
 }roo_plugin_t;
 
