@@ -21,7 +21,7 @@
 		<div class="row">
 			<div class="col">
 				<h3> Window Size </h3>
-					(This controls the size of the window we use for splitting the adio signal)
+					(This controls the size of the window we use for splitting the audio signal)
 			</div>
 		</div>
 		<div class="row">
@@ -66,7 +66,7 @@
 				</div>
 				<div v-for="selector in left_efects" v-bind:key="selector.id">
 					Choose the desired effect:
-					<md-autocomplete v-model="selector.name" :md-options="test"
+					<md-autocomplete v-model="selector.name" :md-options="test" md-input-placeholder='SELECT EFFECT'
 						@md-selected="left_efects.find(x => x.id === selector.id).name = selector.name;
 						selectLeftEffect(selector)">
 					</md-autocomplete>
@@ -86,7 +86,7 @@
 				</div>
 				<div v-for="selector in right_efects" v-bind:key="selector.id">
 					Choose the desired effect:
-					<md-autocomplete v-model="selector.name" :md-options="test"
+					<md-autocomplete v-model="selector.name" :md-options="test" md-input-placeholder='SELECT EFFECT'
 						@md-selected="right_efects.find(x => x.id === selector.id).name = selector.name;
 						selectRightEffect(selector)">
 					</md-autocomplete>
@@ -113,9 +113,6 @@
 	ipcRenderer.on('instantiate-plugin', (event, arg) => {
 		console.log('[Vue] plugin instantiated');
 	})
-
-	let plugins = ipcRenderer.sendSync('get-plugin-list');
-	ipcRenderer.send('instantiate-plugin', {plugin_name : plugins[0], lane: 1})
 	export default {
 		name: "App",
 		components: {
@@ -159,12 +156,12 @@
 			},
 			selectLeftEffect: (selector) => {
 				log.debug("[Vue] adding left effect " + selector.name);
-				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 0, id: selector.id});
+				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 0, index: selector.id});
 				log.debug("[Vue] added left effect ");
 			},
 			selectRightEffect: (selector) => {
 				log.debug("[Vue] adding right effect " + selector.name);
-				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 1, id: selector.id});
+				ipcRenderer.send("instantiate-plugin", {plugin_name: selector.name, lane: 1, index: selector.id});
 				log.debug("[Vue] added right effect ");
 			},
 			updateMode: (m) => {
@@ -175,7 +172,6 @@
 		}
 	};
 </script>
-
 
 <style lang="scss">
 	@charset "utf-8";

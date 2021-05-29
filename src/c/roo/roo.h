@@ -1,5 +1,5 @@
-#ifndef _ADDONH
-#define _ADDONH
+#ifndef ROO_H
+# define ROO_H
 #include <js_native_api.h>
 napi_value create_addon(napi_env env);
 #endif  // _ADDONH

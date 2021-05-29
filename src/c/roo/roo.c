@@ -22,6 +22,7 @@
 #include "interface.h"
 #include "log.h"
 #include "plugin.h"
+#include "lane.h"
 
 jack_port_t *roo_out1, *roo_out2, *roo_in;
 jack_port_t *unroo_out, *unroo_in1, *unroo_in2;
@@ -29,7 +30,6 @@ jack_client_t *roo_client, *unroo_client;
 config_t *args;
 napi_value NAPI_TRUE;
 napi_value NAPI_FALSE;
-
 #ifndef M_PI
 #define M_PI (3.14159265)
 #endif
@@ -131,6 +131,7 @@ static napi_value init_roo(napi_env env, napi_callback_info info)
 		log_error("cannot activate unroo_client");
 		return NAPI_FALSE;
 	}
+	init_lanes_state(roo_client, unroo_client, 2);
 	return NAPI_TRUE;
 }
 
@@ -153,17 +154,23 @@ static napi_value instantiate_plugin(napi_env env, napi_callback_info info){
 	napi_value this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
 	instantiate_request_t *request = instantiate_request_from_js(env,*argv);
-	if(!add_plugin(request->plugin_name))
+	if(!add_plugin(request))
 		return NAPI_FALSE;
 	return NAPI_TRUE;
 }
 
 static napi_value get_plugin_list(napi_env env, napi_callback_info info){
+	log_debug("[roo] Get plugin list called\n");
 	uint32_t count = 0;
 	const char ** list = get_lv2_uri_list(&count);
 	return string_list_to_js(env,list,count);
 }
 
+static napi_value rooda_shutdown(napi_env env, napi_callback_info info){
+	log_debug("[roo] Rooda shutdown called\n");
+	carla_cleanup();
+	return NAPI_TRUE;
+}
 napi_value create_addon(napi_env env) {
 	log_set_level(LOG_DEBUG);
 	napi_value module;
@@ -219,5 +226,17 @@ napi_value create_addon(napi_env env) {
 										module,
 										"getPluginList",
 										get_list));
+	napi_value shutdown;
+	NAPI_CALL(env, napi_create_function(env,
+									"shutdown",
+									NAPI_AUTO_LENGTH,
+									rooda_shutdown,
+									NULL,
+									&shutdown));
+
+	NAPI_CALL(env, napi_set_named_property(env,
+										module,
+										"shutdown",
+										shutdown));
 	return module;
 }
