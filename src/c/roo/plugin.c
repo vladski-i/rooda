@@ -6,6 +6,9 @@
 #include "map.h"
 #include <lilv-0/lilv/lilv.h>
 #include <stdlib.h>
+#include "types.h"
+#include <jack/jack.h>
+#include "lane.h"
 
 CarlaHostHandle carla_handle;
 map plugin_map;
@@ -63,12 +66,20 @@ void carla_cleanup(){
     carla_engine_close(carla_handle);
 }
 
-bool add_plugin(const char *plugin_name){
-    log_debug("[roo] add_plugin(%s)\n",plugin_name);
+//dog shit: no support for multiple instances of the same plugin
+bool add_plugin(instantiate_request_t *request){
+    char *plugin_name = request->plugin_name;
+    uint lane = request->lane;
+    uint index = request->index;
+    log_debug("add_plugin(%s,%d,%d)",plugin_name,index,lane);
+    roo_plugin_t *plugin = malloc(sizeof(roo_plugin_t));
+    plugin->name = plugin_name;
+    plugin->id = lane * 100 + index;
     const char *plugin_uri = map_get(plugin_map,plugin_name);
     if(!plugin_uri)
         return false;
-    if(!carla_add_plugin(carla_handle, BINARY_NATIVE, PLUGIN_LV2, "", "", plugin_uri, 0, NULL, 0x0))
+    if(!carla_add_plugin(carla_handle, BINARY_NATIVE, PLUGIN_LV2, plugin->name, "", plugin_uri, 0, NULL, 0x0))
         return false;
+    add_plugin_to_lane(request,plugin);
     return true;
 }

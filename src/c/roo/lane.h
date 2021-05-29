@@ -1,3 +1,5 @@
 #include <jack/types.h>
+#include "types.h"
 
-roo_lanes_state_t *init_lanes_state(jack_client_t *roo, jack_client_t *unroo, int lanes_no);
+void init_lanes_state(jack_client_t *roo, jack_client_t *unroo, uint lanes_no);
+uint add_plugin_to_lane(instantiate_request_t *request, roo_plugin_t *plugin);

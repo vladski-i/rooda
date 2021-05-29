@@ -30,7 +30,6 @@ jack_client_t *roo_client, *unroo_client;
 config_t *args;
 napi_value NAPI_TRUE;
 napi_value NAPI_FALSE;
-
 #ifndef M_PI
 #define M_PI (3.14159265)
 #endif
@@ -132,6 +131,7 @@ static napi_value init_roo(napi_env env, napi_callback_info info)
 		log_error("cannot activate unroo_client");
 		return NAPI_FALSE;
 	}
+	init_lanes_state(roo_client, unroo_client, 2);
 	return NAPI_TRUE;
 }
 
@@ -144,7 +144,6 @@ static napi_value update_config(napi_env env, napi_callback_info info){
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
 	config_from_js(env,*argv, args);
 	log_debug("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",args->window_size,args->mode);
-	init_lanes_state(roo_client,unroo_client, 2);
 	return NAPI_TRUE;
 }
 
@@ -155,18 +154,20 @@ static napi_value instantiate_plugin(napi_env env, napi_callback_info info){
 	napi_value this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
 	instantiate_request_t *request = instantiate_request_from_js(env,*argv);
-	if(!add_plugin(request->plugin_name))
+	if(!add_plugin(request))
 		return NAPI_FALSE;
 	return NAPI_TRUE;
 }
 
 static napi_value get_plugin_list(napi_env env, napi_callback_info info){
+	log_debug("[roo] Get plugin list called\n");
 	uint32_t count = 0;
 	const char ** list = get_lv2_uri_list(&count);
 	return string_list_to_js(env,list,count);
 }
 
 static napi_value rooda_shutdown(napi_env env, napi_callback_info info){
+	log_debug("[roo] Rooda shutdown called\n");
 	carla_cleanup();
 	return NAPI_TRUE;
 }

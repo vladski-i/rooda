@@ -93,6 +93,14 @@ instantiate_request_t *instantiate_request_from_js(napi_env env,napi_value objec
     }
     NAPI_CALL(env, napi_get_named_property(env, object, "lane", &field));
     NAPI_CALL(env, napi_get_value_uint32(env, field, &(request->lane)));
+
+    NAPI_CALL(env, napi_has_named_property(env,object,"index",&has));
+    if(!has){
+        free(request);
+        return NULL;
+    }
+    NAPI_CALL(env, napi_get_named_property(env, object, "index", &field));
+    NAPI_CALL(env, napi_get_value_uint32(env, field, &(request->index)));
     return request;
 }
 

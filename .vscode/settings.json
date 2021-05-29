@@ -13,6 +13,7 @@
         "lilv.h": "c",
         "cstdlib": "c",
         "jack.h": "c",
-        "startup.h": "c"
+        "startup.h": "c",
+        "types.h": "c"
     }
 }

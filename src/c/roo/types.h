@@ -1,3 +1,6 @@
+#ifndef TYPES_H
+# define TYPES_H
+
 #include <stdint.h>
 #include <jack/types.h>
 
@@ -19,12 +22,14 @@ typedef struct config {
 typedef struct instantiate_request{
     char *plugin_name;
     uint32_t lane;
+    uint32_t index;
 }instantiate_request_t;
 
 typedef struct roo_plugin {
     char *name;
     const jack_port_t **in_ports;
     const jack_port_t **out_ports;
+    uint32_t id;
 
 }roo_plugin_t;
 
@@ -42,3 +47,5 @@ typedef struct roo_lanes_state {
     roo_lane_state_t *lanes;
     uint32_t lanes_no;
 }roo_lanes_state_t;
+
+#endif
