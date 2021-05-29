@@ -6,9 +6,24 @@
 #include "types.h"
 #include "lane.h"
 #include "log.h"
+#include "regex.h"
 
 roo_lanes_state_t *lanes;
 jack_client_t *client;
+
+//TODO: use regex capture groups to replace ( with \(
+static void sanitize_parens(char *name){
+    char *parens = strchr(name, '(');
+    while(parens){
+        *parens = '.';
+        parens = strchr(parens, '(');
+    }
+    parens = strchr(name, ')');
+    while(parens){
+        *parens = '.';
+        parens = strchr(parens, ')');
+    }
+}
 
 roo_plugin_t *get_roo_plugin_for_lane(jack_client_t *roo, int lane_no){
     roo_plugin_t *plugin = malloc(sizeof(roo_plugin_t));
@@ -69,11 +84,13 @@ void fill_plugin_data(jack_client_t *client, roo_plugin_t *plugin){
     plugin->out_port_names = calloc(4, sizeof(char*));
     char *name_regex = calloc(strlen(plugin->name) + 2,sizeof(char));
     sprintf(name_regex, "^%s",plugin->name);
+    // Sanitize parens out of regex
+    sanitize_parens(name_regex);
     log_debug("name regex: %s\n",name_regex);
     const char **ports = jack_get_ports(client, name_regex,"",JackPortIsInput);
     log_debug("ports: %d\n",ports);
     unsigned i = 0;
-    while(*ports){
+    while(ports && *ports){
         log_debug("[roo] %s_in_port: %s\n",plugin->name,*ports);
         jack_port_t *port = jack_port_by_name(client, *ports);
         log_debug("[roo] jack_port_t :%d\n",port);
@@ -85,7 +102,7 @@ void fill_plugin_data(jack_client_t *client, roo_plugin_t *plugin){
     plugin->no_ports = i;
     ports = jack_get_ports(client,name_regex,"",JackPortIsOutput);
     i = 0;
-    while(*ports){
+    while(ports && *ports){
         log_debug("[roo] %s_out_port: %s\n",plugin->name,*ports);
         jack_port_t *port = jack_port_by_name(client, *ports);
         log_debug("[roo] jack_port_t :%d\n",port);

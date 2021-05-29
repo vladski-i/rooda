@@ -62,15 +62,11 @@ config_t *config_from_js(napi_env env,napi_value object, config_t *old){
             log_trace("%.2f,",conf->window[t]);
         log_trace("]\n");
     } 
-
-    conf->_roo = old->_roo;
+    CHANNELED{
+        conf->_roo[channel] = old->_roo[channel];
+    }
     memcpy(old,conf,sizeof(config_t));
     return conf;
-    // conf->window_size = 
-}
-
-napi_value toJS(napi_env env, config_t object){
-    return NULL;
 }
 
 instantiate_request_t *instantiate_request_from_js(napi_env env,napi_value object){

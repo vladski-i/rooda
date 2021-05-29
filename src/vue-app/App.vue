@@ -28,7 +28,7 @@
 			<div class="col">
 			<round-slider v-model="windowSize" 
 				:update="updateWindowSize" 
-				:min="50" 
+				:min="2" 
 				:max="50000"
 				start-angle="315"
 				end-angle="+270"/>
