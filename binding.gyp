@@ -10,7 +10,8 @@
         "./src/c/roo/log.c",
         "./src/c/roo/plugin.c",
         "./src/c/roo/map.c",
-        "./src/c/roo/lane.c"],
+        "./src/c/roo/lane.c",
+        "./src/c/roo/operations.c"],
       "libraries": ["-ljack", "-lcarla_standalone2", "-llilv-0"],
       "include_dirs": ["/usr/include/carla", "/usr/include/carla/includes"]
     }
