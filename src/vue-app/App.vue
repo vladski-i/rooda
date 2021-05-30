@@ -3,94 +3,103 @@
 		<h1> Rooda </h1>
 		<div class="row">
 			<div class="col">
-				<h3> Balance </h3>
-					(This controls the proportion of the left and right channel i.e.: percentage of the left channel)
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-			<round-slider v-model="balance" 
-				:update="updateBalance" 
-				:min="0" 
-				:max="100"
-				start-angle="315"
-				end-angle="+270"/>
-			</div>
-		</div>
+				<div class="row">
+					<div class="col">
+						<h3> Balance </h3>
+							(This controls the proportion of the left and right channel i.e.: percentage of the left channel)
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+					<round-slider v-model="balance" 
+						:update="updateBalance" 
+						:min="0" 
+						:max="100"
+						start-angle="315"
+						end-angle="+270"
+						radius="70"/>
+					</div>
+				</div>
 
-		<div class="row">
-			<div class="col">
-				<h3> Window Size </h3>
-					(This controls the size of the window we use for splitting the audio signal)
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-			<round-slider v-model="windowSize" 
-				:update="updateWindowSize" 
-				:min="2" 
-				:max="50000"
-				start-angle="315"
-				end-angle="+270"/>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-				<h3> Volume </h3>
-				<round-slider v-model="volume_value" 
-					:update="updateVolume" 
-					:min="0" 
-					:max="100"
-					start-angle="315"
-					end-angle="+270"/>
-			</div>
-		</div>
-		<div class="row">
-			Change the mode of the signal splitting: 
-			<select v-model="mode" v-on:change="updateMode(mode)">
-				<option>ZERO_FILL</option>
-				<option>NO_FILL</option>
-				<option>SINE</option>
-			</select>
-		</div>
-		<div class="row">
-			<div class="col">
-				<div>
-					<div>
-						<button class="add_effect" @click="left_efects.push({id: left_counter, name: '', is_left: true});
-							left_counter += 1;">Add an effect to the left window</button>
-					</div>
-					<div>
-						You have {{left_counter}} effects here
+				<div class="row">
+					<div class="col">
+						<h3> Window Size </h3>
+							(This controls the size of the window we use for splitting the audio signal)
 					</div>
 				</div>
-				<div v-for="selector in left_efects" v-bind:key="selector.id">
-					Choose the desired effect:
-					<md-autocomplete v-model="selector.name" :md-options="test" md-input-placeholder='SELECT EFFECT'
-						@md-selected="left_efects.find(x => x.id === selector.id).name = selector.name;
-						selectLeftEffect(selector)">
-					</md-autocomplete>
-					<button class="show_ui" @click="showUI(selector)">Show UI</button>
+				<div class="row">
+					<div class="col">
+					<round-slider v-model="windowSize" 
+						:update="updateWindowSize" 
+						:min="2" 
+						:max="50000"
+						start-angle="315"
+						end-angle="+270"
+						radius="70"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<h3> Volume </h3>
+						<round-slider v-model="volume_value" 
+							:update="updateVolume" 
+							:min="0" 
+							:max="100"
+							start-angle="315"
+							end-angle="+270"
+							radius="70"/>
+					</div>
+				</div>
+				<div class="row">
+					Change the mode of the signal splitting: 
+					<select v-model="mode" v-on:change="updateMode(mode)">
+						<option>ZERO_FILL</option>
+						<option>NO_FILL</option>
+						<option>SINE</option>
+					</select>
 				</div>
 			</div>
+			<div class="col">
+				<div class="row">
+					<div class="col">
+						<div>
+							<div>
+								<button class="add_effect" @click="left_efects.push({id: left_counter, name: '', is_left: true});
+									left_counter += 1;">Add an effect to the left window</button>
+							</div>
+							<div>
+								You have {{left_counter}} effects here
+							</div>
+						</div>
+						<div v-for="selector in left_efects" v-bind:key="selector.id">
+							Choose the desired effect:
+							<md-autocomplete v-model="selector.name" :md-options="test" md-input-placeholder='SELECT EFFECT'
+								@md-selected="left_efects.find(x => x.id === selector.id).name = selector.name;
+								selectLeftEffect(selector)">
+							</md-autocomplete>
+							<button class="show_ui" @click="showUI(selector)">Show UI</button>
+						</div>
+					</div>
 
-			<div class="col">
-				<div>
-					<div>
-						<button class="add_effect" @click="right_efects.push({id: right_counter, name: '', is_left: false});
-							right_counter += 1;">Add an effect to the right window</button>
+					<div class="col">
+						<div>
+							<div>
+								<button class="add_effect" @click="right_efects.push({id: right_counter, name: '', is_left: false});
+									right_counter += 1;">Add an effect to the right window</button>
+							</div>
+							<div>
+								You have {{right_counter}} effects here
+							</div>
+						</div>
+						<div v-for="selector in right_efects" v-bind:key="selector.id">
+							Choose the desired effect:
+							<md-autocomplete v-model="selector.name" :md-options="test" md-input-placeholder='SELECT EFFECT'
+								@md-selected="right_efects.find(x => x.id === selector.id).name = selector.name;
+								selectRightEffect(selector)">
+							</md-autocomplete>
+							<button class="show_ui" @click="showUI(selector)">Show UI</button>
+						</div>
 					</div>
-					<div>
-						You have {{right_counter}} effects here
-					</div>
-				</div>
-				<div v-for="selector in right_efects" v-bind:key="selector.id">
-					Choose the desired effect:
-					<md-autocomplete v-model="selector.name" :md-options="test" md-input-placeholder='SELECT EFFECT'
-						@md-selected="right_efects.find(x => x.id === selector.id).name = selector.name;
-						selectRightEffect(selector)">
-					</md-autocomplete>
-					<button class="show_ui" @click="showUI(selector)">Show UI</button>
 				</div>
 			</div>
 		</div>
