@@ -129,7 +129,6 @@
 		},
 		data() {
 			return {
-				value : 0,
 				balance: 50,
 				windowSize: 0,
 				volume_value: 20,
@@ -194,7 +193,8 @@
 		text-align: center;
 		background-color: $background-color;
 		color: $text-color;
-		margin-top: 60px;
+		padding-top: 60px;
+		padding-bottom: 200px;
 	}
 
 	img.vue-logo {
