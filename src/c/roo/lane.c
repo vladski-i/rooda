@@ -171,7 +171,7 @@ bool check_for_replace(instantiate_request_t *request){
 }
 
 bool remove_plugin_from_lane(instantiate_request_t *request){
-    log_debug("remove_plugin_from_lane(%d_\n",request);
+    log_debug("remove_plugin_from_lane(%d)\n",request);
     roo_lane_state_t *lane = &(lanes->lanes[request->lane]);
     roo_lane_state_iter_t *prev = lane->iter;
     uint index = 0;

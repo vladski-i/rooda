@@ -85,6 +85,8 @@ bool add_plugin(instantiate_request_t *request){
     }
     if(!carla_add_plugin(carla_handle, BINARY_NATIVE, PLUGIN_LV2, plugin->name, "", plugin_uri, plugin->id, NULL, 0x0))
         return false;
+    log_debug("show custom UI\n");
+    carla_show_custom_ui(carla_handle, plugin->id, false);
     add_plugin_to_lane(request,plugin);
     return true;
 }

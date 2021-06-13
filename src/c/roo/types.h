@@ -18,6 +18,8 @@ typedef struct config {
     roo_mode_t mode;
     uint32_t _roo[CHANNELS];
     float *window;
+    uint32_t balance;
+    uint32_t master_volume;
 }config_t;
 
 /* JS object model coming from the frontend*/

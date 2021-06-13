@@ -174,8 +174,7 @@ napi_value update_config(napi_env env, napi_callback_info info){
 	napi_value *argv = malloc(2 * sizeof(napi_value));
 	napi_value this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &this, NULL));
-	config_from_js(env,*argv, args);
-	log_debug("[roo]Update_config called with values: { \"window_size\" : %d, \"mode\" : %d }\n",args->window_size,args->mode);
+	config_from_js(env,*argv, args, this);
 	return NAPI_TRUE;
 }
 

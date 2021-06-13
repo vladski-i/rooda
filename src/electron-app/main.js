@@ -13,7 +13,9 @@ else
 
 console.log(roo.updateConfig({
 	windowSize:2,
-	mode:"ZERO_FILL"
+	mode:"ZERO_FILL",
+	balance: 50,
+	volume_value: 100
 }));
 
 

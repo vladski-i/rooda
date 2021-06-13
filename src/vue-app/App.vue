@@ -116,7 +116,7 @@
 	const log = logger({level: "debug"}) // import logger for easier logging
 
 	ipcRenderer.on('update-config', (event, arg) => {
-		log.debug('[Vue] config updated confirmed');
+		log.debug('[Vue] config update confirmed');
 	})
 
 	ipcRenderer.on('instantiate-plugin', (event, arg) => {
@@ -132,7 +132,7 @@
 				value : 0,
 				balance: 50,
 				windowSize: 0,
-				volume_value: 20,
+				volume_value: 100,
 				left_counter: 0,
 				right_counter: 0,
 				left_efects: [],
@@ -150,12 +150,12 @@
 			},
 			updateVolume: (v) => {
 				log.debug("[Vue] updating volume_value to " + v);
-				ipcRenderer.send("update-config", { volume_value: v });
+				ipcRenderer.send("update-config", { volume_value: v.value });
 				log.debug("[Vue] config updated");
 			},
 			updateBalance: (b) => {
 				log.debug("[Vue] updating balance to " + b);
-				ipcRenderer.send("update-config", { balance: b});
+				ipcRenderer.send("update-config", { balance: b.value});
 				log.debug("[Vue] config updated");
 			},
 			showUI: (selector) => {

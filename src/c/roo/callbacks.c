@@ -1,5 +1,6 @@
 #include <jack/types.h>
 #include <jack/jack.h>
+#include <math.h>
 #include "types.h"
 #include "log.h"
 /*UNROO CALLBACK FUNCTION + HELPERS */
@@ -8,10 +9,15 @@ static void
 unroo_zero_fill(jack_default_audio_sample_t **in1,
 				jack_default_audio_sample_t **in2,
 				jack_default_audio_sample_t **out,
-				jack_nframes_t nframes){
+				jack_nframes_t nframes,
+				config_t *conf){
+	float balance1 = fmin(( 1.0 * conf->balance / 100.0),1.0);
+	float balance2 = fmin(( 1.0 - 1.0 * conf->balance / 100.0),1.0);
+	float master_vol = (1.0 * conf->master_volume / 100.0);
+	// printf("%f %f %f\n",balance1,balance2, master_vol);
 	CHANNELED{
 		for (unsigned int i = 0; i < nframes; i ++){
-			out[channel][i] = in1[channel][i] + in2[channel][i];
+			out[channel][i] = (in1[channel][i] * balance1 + in2[channel][i] * balance2) * master_vol;
 		}
 	}
 
@@ -21,18 +27,21 @@ static void
 unroo_no_fill(jack_default_audio_sample_t **in1,
 				jack_default_audio_sample_t **in2,
 				jack_default_audio_sample_t **out,
-				jack_nframes_t nframes){
+				jack_nframes_t nframes,
+				config_t *conf){
 	static int roo = 0;
 	int init_roo = roo;
-	for (unsigned int i = 0; i < nframes; i ++){
-		if(roo % 2){
-			out[i] = in1[(i + init_roo)/ 2];
+	CHANNELED{
+		for (unsigned int i = 0; i < nframes; i ++){
+			if(roo % 2){
+				out[channel][i] = in1[channel][(i + init_roo)/ 2] * (float)( 1.0 * conf->balance / 50) * (conf->master_volume / 100);
+			}
+			else{
+				out[channel][i] = in2[channel][(i + init_roo)/ 2] * ( 1.0 - 1.0 * conf->balance / 50) * (conf->master_volume / 100);
+			}
+			roo++;
+			roo = roo % 2;
 		}
-		else{
-			out[i] = in2[(i + init_roo)/ 2];
-		}
-		roo++;
-		roo = roo % 2;
 	}
 
 }
@@ -40,19 +49,19 @@ int
 unroo_callback (jack_nframes_t nframes, void *arg)
 {
 	jack_default_audio_sample_t *out[CHANNELS], *in1[CHANNELS], *in2[CHANNELS];
-	config_t args = *(config_t*)arg;
+	config_t *conf = (config_t*)arg;
 	CHANNELED{
 		out[channel] = (jack_default_audio_sample_t*)jack_port_get_buffer (unroo_out[channel], nframes);
 		in1[channel] = (jack_default_audio_sample_t*)jack_port_get_buffer (unroo_in1[channel], nframes);
 		in2[channel] = (jack_default_audio_sample_t*)jack_port_get_buffer (unroo_in2[channel], nframes);
 	}
-	switch(args.mode){
+	switch(conf->mode){
 		case SINE:
 		case ZERO_FILL:
-			unroo_zero_fill(in1, in2, out, nframes);
+			unroo_zero_fill(in1, in2, out, nframes, conf);
 			break;
 		case NO_FILL:
-			unroo_no_fill(in1, in2, out, nframes);
+			unroo_no_fill(in1, in2, out, nframes, conf);
 			break;
 		default:
 			break;
