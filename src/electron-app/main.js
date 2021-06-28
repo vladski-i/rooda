@@ -81,7 +81,6 @@ ipcMain.on("update-config", (event, arg) => {
 
 ipcMain.on("instantiate-plugin", (event, arg) => {
 	log.debug("[Electron] Instantiating plugin " + JSON.stringify(arg));
-	
 	log.debug("[Electron] Plugin instantiated :" + roo.instantiatePlugin(arg));
 	event.reply('instantiate-plugin',true);
 });

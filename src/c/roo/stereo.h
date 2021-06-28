@@ -1,8 +1,8 @@
 #ifndef CONF_H
 # define CONF_H
 
-// #define MONO
-#define STEREO
+#define MONO
+// #define STEREO
 
 #ifdef STEREO
 # define CHANNELS 2

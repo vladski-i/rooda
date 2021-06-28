@@ -102,15 +102,17 @@ roo_no_fill(jack_default_audio_sample_t **in,
 				jack_nframes_t nframes){
 	static int roo = 0;
 	int init_roo = roo;
-	for (unsigned int i = 0; i < nframes; i ++){
-		if(roo % 2){
-			out1[(i + init_roo)/ 2] = in[i];
+	CHANNELED{
+		for (unsigned int i = 0; i < nframes; i ++){
+			if(roo % 2){
+				out1[channel][(i + init_roo)/ 2] = in[channel][i];
+			}
+			else{
+				out2[channel][(i + init_roo)/ 2] = in[channel][i];
+			}
+			roo++;
+			roo = roo % 2;
 		}
-		else{
-			out2[(i + init_roo)/ 2] = in[i];
-		}
-		roo++;
-		roo = roo % 2;
 	}
 
 }
