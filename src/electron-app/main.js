@@ -13,7 +13,9 @@ else
 
 console.log(roo.updateConfig({
 	windowSize:2,
-	mode:"ZERO_FILL"
+	mode:"ZERO_FILL",
+	balance: 50,
+	volume_value: 100
 }));
 
 
@@ -79,7 +81,6 @@ ipcMain.on("update-config", (event, arg) => {
 
 ipcMain.on("instantiate-plugin", (event, arg) => {
 	log.debug("[Electron] Instantiating plugin " + JSON.stringify(arg));
-	
 	log.debug("[Electron] Plugin instantiated :" + roo.instantiatePlugin(arg));
 	event.reply('instantiate-plugin',true);
 });

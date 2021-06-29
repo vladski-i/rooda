@@ -24,6 +24,9 @@ bool init_carla_backend(){
     for (unsigned int i = 0; i < driver_count; i++){
         const char *driver_name = carla_get_engine_driver_name(i);
         log_debug("driver: %s|",driver_name);
+    }
+    for (unsigned int i = 0; i < driver_count; i++){
+        const char *driver_name = carla_get_engine_driver_name(i);
         if(!strncmp("JACK",driver_name,4)){
             carla_engine_init(carla_handle,driver_name,"Roo");
             have_jack = true;
@@ -74,7 +77,7 @@ bool add_plugin(instantiate_request_t *request){
     log_debug("add_plugin(%s,%d,%d)",plugin_name,index,lane);
     roo_plugin_t *plugin = malloc(sizeof(roo_plugin_t));
     plugin->name = plugin_name;
-    plugin->id = lane * 100 + index;
+    plugin->id = carla_get_current_plugin_count(carla_handle);
     const char *plugin_uri = map_get(plugin_map,plugin_name);
     if(!plugin_uri)
         return false;
@@ -85,6 +88,16 @@ bool add_plugin(instantiate_request_t *request){
     }
     if(!carla_add_plugin(carla_handle, BINARY_NATIVE, PLUGIN_LV2, plugin->name, "", plugin_uri, plugin->id, NULL, 0x0))
         return false;
+    carla_set_active(carla_handle, plugin->id, true);
+    log_debug("show custom UI\n");
+    const CarlaPluginInfo* const pluginInfo = carla_get_plugin_info(carla_handle, plugin->id);
+    // if(pluginInfo->hints & PLUGIN_HAS_CUSTOM_UI){
+    //     carla_set_custom_ui_title(carla_handle, plugin->id, "some title");
+    log_debug("tcp port %d\n",carla_get_host_osc_url_tcp(carla_handle));
+        // carla_show_custom_ui(carla_handle, plugin->id, true);
+    // }
+    // carla_show_custom_ui(carla_handle, plugin->id, true);
+    // carla_render_inline_display(carla_handle,plugin->id, 400,400);
     add_plugin_to_lane(request,plugin);
     return true;
 }

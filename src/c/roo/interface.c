@@ -6,12 +6,47 @@
 #include <math.h>
 #include "interface.h"
 
-config_t *config_from_js(napi_env env,napi_value object, config_t *old){
+static void *json_print(char *fmt, napi_env env, napi_value object, napi_value this){
+    napi_value JSON;
+    napi_value global;
+    NAPI_CALL(env,napi_get_global(env, &global));
+    napi_value stringify;
+    NAPI_CALL(env, napi_get_named_property(env, global, "JSON", &JSON));
+    NAPI_CALL(env, napi_get_named_property(env, JSON, "stringify", &stringify));
+    napi_value string_value;
+    NAPI_CALL(env, napi_call_function(env, this, stringify, 1, &object, &string_value));
+    char *result = calloc(1000, sizeof(char));
+    size_t len;
+    NAPI_CALL(env, napi_get_value_string_latin1(env, string_value, result, 1000, &len));
+    log_debug(fmt, result);
+    return NULL;
+}
+
+config_t *config_from_js(napi_env env,napi_value object, config_t *old, napi_value this){
+    json_print("config_from_js(env, %s, old)", env, object, this);
     config_t *conf = malloc(sizeof(config_t));
     char *buf = malloc(20 * sizeof(char));
     size_t copied;
     napi_value result;
     bool has;
+    NAPI_CALL(env, napi_has_named_property(env,object,"balance",&has));
+    if(has){
+         NAPI_CALL(env, napi_get_named_property(env, object, "balance", &result));
+         NAPI_CALL(env, napi_get_value_uint32(env, result, &(conf->balance)));
+         log_debug("[roo] copied balance\n");
+    }
+    else{
+        conf->balance = old->balance;
+    }
+    NAPI_CALL(env, napi_has_named_property(env,object,"volume_value",&has));
+    if(has){
+         NAPI_CALL(env, napi_get_named_property(env, object, "volume_value", &result));
+         NAPI_CALL(env, napi_get_value_uint32(env, result, &(conf->master_volume)));
+         log_debug("[roo] copied volume\n");
+    }
+    else{
+        conf->master_volume = old->master_volume;
+    }
     NAPI_CALL(env, napi_has_named_property(env,object,"mode",&has));
     if(has){
         NAPI_CALL(env, napi_get_named_property(env, object, "mode", &result));
@@ -42,7 +77,6 @@ config_t *config_from_js(napi_env env,napi_value object, config_t *old){
         log_debug("[roo] using old mode value\n");
         conf->mode = old->mode;
         free(buf);
-        log_debug("[roo] using old mode value\n");
     }
     NAPI_CALL(env, napi_has_named_property(env,object,"windowSize",&has));
     if(has){
